@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafkadrop-service
+  namespace: cloud-connect
+spec:
+  type: NodePort
+  selector:
+    app: kafkadrop
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 9000

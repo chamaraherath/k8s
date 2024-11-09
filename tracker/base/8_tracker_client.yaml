@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-client
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: tracker-client
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tracker-client
+    spec:
+      serviceAccountName: tracker
+      containers:
+        - name: api
+          imagePullPolicy: Always
+          image: patch_this
+          env:
+          - name: VERSION
+            value: "patch_this"
+          - name: ENVIRONMENT
+            value: "patch_this"
+          - name: DEBEZIUM_URL
+            value: "http://debeziumcdc.tracker.svc.cluster.local:8083"
+          - name: KSQLDB_SERVER_URL
+            value: "http://ksqldb-server.tracker.svc.cluster.local:8088"
+          - name: KAFKA_URL
+            value: "kafka-tracker.tracker.svc.cluster.local:9092"
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_host
+          - name: MYSQL_PORT
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_port
+          - name: MYSQL_DBNAME
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_dbname
+          - name: MYSQL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_username
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_password
+          - name: MYSQL_SERVER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: mysqldb-connection-string
+                key: mysql_server_name
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracker-client
+  namespace: tracker
+spec:
+  selector:
+    app: tracker-client
+  ports:
+    - name: http
+      port: 8080
+  type: NodePort
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mysqldb-connection-string
+  namespace: tracker
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-sm
+    kind: SecretStore
+  target:
+    name: mysqldb-connection-string
+    creationPolicy: Owner
+  dataFrom:
+  - extract:
+      key: "patch_this"
+      version: AWSCURRENT

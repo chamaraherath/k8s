@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-api-gateway
+  namespace: cloud-connect
+spec:
+  selector:
+    matchLabels:
+      app: sample-api-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sample-api-gateway
+    spec:
+      containers:
+      - name: sample-api-gateway
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/sample-api-gateway:1.2.8-dev
+        ports:
+        - containerPort: 3010
+        env:
+        - name: PREFIX
+          value: 'api/v1/callback'

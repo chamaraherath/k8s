@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-drop-config
+data:
+  KAFKA_BROKERCONNECT: "kafka-service.cloud-connect.svc.cluster.local:9092"
+  KAFKA_ZOOKEEPERCONNECT: "zookeeper-service.cloud-connect.svc.cluster.local:2181"
+  KAFKA_OPTS: "-Xms256M -Xmx512M"

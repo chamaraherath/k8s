@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-ms-api
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: tracker-ms-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tracker-ms-api
+    spec:
+      containers:
+      - name: api
+        imagePullPolicy: Always
+        image: patch_this
+        env:
+        - name: DEPENV
+          value: "patch_this"
+        - name: ENVIRONMENT
+          value: "patch_this"
+        - name: KAFKA_BROKER_HOST
+          value: "kafka-tracker.tracker.svc.cluster.local"
+        - name: KAFKA_BROKER_PORT
+          value: "9092"
+        - name: MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-connection-string
+              key: connection-string
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracker-ms-api
+  namespace: tracker
+spec:
+  selector:
+    app: tracker-ms-api
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+  type: NodePort
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mongodb-connection-string
+  namespace: tracker
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-sm
+    kind: SecretStore
+  target:
+    name: mongodb-connection-string
+    creationPolicy: Owner
+  data:
+  - secretKey: connection-string
+    remoteRef:
+      key: "patch_this"
+      version: "AWSCURRENT"

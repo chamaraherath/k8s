@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+
+- ../../mongodb/qa
+- ../../zookeeper/qa
+- ../../kafka/qa
+- ../../kafkadrop/qa
+- ../../data-bridge-microservice/qa
+- ../../person-api-gateway/qa
+- ../../person-microservice/qa
+- ../../location-api-gateway/qa
+- ../../location-microservice/qa
+- ../../cloudql-service/qa
+- ../../callback-microservice/qa
+- ../../jwt-service/qa
+- ../../booking-api-gateway/qa
+- ../../booking-microservice/qa

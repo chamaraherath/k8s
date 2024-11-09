@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-client
+  namespace: tracker
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: api
+          image: 922369738522.dkr.ecr.ap-southeast-2.amazonaws.com/tracker-client:1.1.1
+          env:
+          - name: VERSION
+            value: "1.0.0"
+          - name: ENVIRONMENT
+            value: "PROD"
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mysqldb-connection-string
+  namespace: tracker
+spec:
+  dataFrom:
+  - extract:
+      key: "prd-eks-tracker-mysqldb-connection-string"
+      version: AWSCURRENT

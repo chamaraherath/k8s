@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: tracker-node-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tracker-node-api
+    spec:
+      containers:
+      - name: api
+        imagePullPolicy: Always
+        image: patch_this
+        ports:
+        - containerPort: 5000
+        env:
+        - name: BC_BASE_URL
+          value: patch_this
+        - name: BC_USER_PROFILE_ENDPOINT
+          value: /api/v1/user/%s/profile-functions
+        - name: OX_TRACKER_MONGO_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-connection-string
+              key: connection-string
+        - name: OX_TRACKER_MONGO_DB_NAME
+          value: tracker
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  selector:
+    app: tracker-node-api
+  ports:
+    - name: http
+      port: 5000
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      client_header_buffer_size 32k;
+      large_client_header_buffers 4 128k;
+spec:
+  ingressClassName: ext-general
+  tls:
+  - hosts:
+    - patch_this
+    secretName: patch_this
+  rules:
+  - host: patch_this
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracker-node-api
+            port:
+              number: 5000

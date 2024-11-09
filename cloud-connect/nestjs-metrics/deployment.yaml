@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nestjs-metrics
+  name: nestjs-metrics
+  namespace: cloud-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nestjs-metrics
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nestjs-metrics
+    spec:
+      containers:
+      - image: ashanr/nestjs-metrics
+        name: nestjs-metrics
+        ports:
+        - containerPort: 3000
+        resources: {}
+status: {}

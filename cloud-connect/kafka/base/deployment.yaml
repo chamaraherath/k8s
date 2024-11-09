@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-broker
+  namespace: cloud-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+      id: broker
+  template:
+    metadata:
+      labels:
+        app: kafka
+        id: broker
+    spec:
+      containers:
+      - name: kafka
+        image: confluentinc/cp-kafka:latest
+        envFrom:
+            - configMapRef:
+                name: kafka-config

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-api-gateway
+  namespace: cloud-connect
+spec:
+  selector:
+    matchLabels:
+      app: booking-api-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: booking-api-gateway
+    spec:
+      containers:
+      - name: booking-api-gateway
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/booking-api-gateway:1.0.6
+        ports:
+        - containerPort: 3000
+        envFrom:
+            - configMapRef:
+                name: booking-gateway-config

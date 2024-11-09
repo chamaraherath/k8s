@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debeziumcdc
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: debeziumcdc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: debeziumcdc
+    spec:
+      serviceAccountName: tracker
+      containers:
+      - name: debeziumcdc
+        image: debezium/connect:1.9
+        env:
+        - name: CONNECT_REST_PORT
+          value: "8083"
+        - name: CONFIG_STORAGE_TOPIC
+          value: "my_connect_configs"
+        - name: OFFSET_STORAGE_TOPIC
+          value: "my_connect_offsets"
+        - name: STATUS_STORAGE_TOPIC
+          value: "my_connect_statuses"
+        - name: BOOTSTRAP_SERVERS
+          value: "kafka-tracker.tracker.svc.cluster.local:9092"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debeziumcdc
+  namespace: tracker
+spec:
+  selector:
+    app: debeziumcdc
+  ports:
+    - name: http
+      port: 8083
+  type: NodePort

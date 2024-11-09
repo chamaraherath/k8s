@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: location-api-gateway
+  namespace: cloud-connect
+spec:
+  ingressClassName: ext-general
+  tls:
+  - hosts:
+    - qa-cloud-connect.opusxenta.dev
+    secretName: cert-qa-cloud-connect.opusxenta.dev
+  rules:
+  - host: qa-cloud-connect.opusxenta.dev
+    http:
+      paths:
+      - path: /api/v1/location
+        pathType: Prefix
+        backend:
+          service:
+            name: location-api-gateway
+            port:
+              number: 3000
+      - path: /location-doc
+        pathType: Prefix
+        backend:
+          service:
+            name: location-api-gateway
+            port:
+              number: 3000

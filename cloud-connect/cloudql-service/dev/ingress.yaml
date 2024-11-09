@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloudql-api-endpoint
+  namespace: cloud-connect
+spec:
+  ingressClassName: ext-general
+  tls:
+  - hosts:
+    - dev-cloud-connect.opusxenta.dev
+    secretName: cert-dev-cloud-connect.opusxenta.dev
+  rules:
+  - host: dev-cloud-connect.opusxenta.dev
+    http:
+      paths:
+      - path: /cloudql
+        pathType: Prefix
+        backend:
+          service:
+            name: cloudql-service
+            port:
+              number: 3000

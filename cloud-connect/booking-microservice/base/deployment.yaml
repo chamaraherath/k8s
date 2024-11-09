@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-microservice
+  namespace: cloud-connect
+spec:
+  selector:
+    matchLabels:
+      app: booking-microservice
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: booking-microservice
+    spec:
+      containers:
+      - name: booking-microservice
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/booking-microservice:1.0.6
+        ports:
+        - containerPort: 3000
+        envFrom:
+            - configMapRef:
+                name: booking-microservice-config

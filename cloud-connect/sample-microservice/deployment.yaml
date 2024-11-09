@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice
+  namespace: opusxenta
+spec:
+  selector:
+    matchLabels:
+      app: microservice
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: microservice
+    spec:
+      containers:
+      - name: microservice
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/sample-microservice:1.0.32-dev
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: aws
+
+# microservice-68f4d4d8f8-v2n84

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ksqldb-server
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: ksqldb-server
+  serviceName: ksqldb-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ksqldb-server
+    spec:
+      serviceAccountName: tracker
+      containers:
+      - name: server
+        image: confluentinc/ksqldb-server:0.28.2
+        env:
+        - name: KSQL_LISTENERS
+          value: "http://0.0.0.0:8088"
+        - name: KSQL_BOOTSTRAP_SERVERS
+          value: "kafka-tracker.tracker.svc.cluster.local:9092"
+        - name: KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE
+          value: "true"
+        - name: KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE
+          value: "true"
+        - name: KSQL_KSQL_CONNECT_URL
+          value: "http://debeziumcdc.tracker.svc.cluster.local:8083"
+        - name: KSQL_KSQL_EXTENSION_DIR
+          value: "/mnt/data/ksql/ext"
+        volumeMounts:
+        - name: data-ksql-ext
+          mountPath: /mnt/data/ksql/ext
+  volumeClaimTemplates:
+  - metadata:
+      name: data-ksql-ext
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: ebs-csi
+      resources:
+        requests:
+          storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ksqldb-server
+  namespace: tracker
+spec:
+  selector:
+    app: ksqldb-server
+  ports:
+    - name: http
+      port: 8088
+  type: NodePort          

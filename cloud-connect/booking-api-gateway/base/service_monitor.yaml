@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: booking-api-gateway
+  namespace: cloud-connect
+spec:
+  endpoints:
+    - honorLabels: true
+      path: /api/v1/metrics
+      targetPort: 3000
+      scheme: http
+      scrapeTimeout: 10s
+  selector:
+    matchLabels:
+      app: booking-api-gateway

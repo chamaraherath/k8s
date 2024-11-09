@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafdrop
+  namespace: tracker
+spec:
+  selector:
+    matchLabels:
+      app: kafdrop
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kafdrop
+    spec:
+      containers:
+      - name: kafdrop
+        image: obsidiandynamics/kafdrop
+        env:
+        - name: KAFKA_BROKERCONNECT
+          value: "kafka-tracker.tracker.svc.cluster.local:9092"
+        - name: JVM_OPTS
+          value: "-Xms16M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+                  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafdrop
+  namespace: tracker
+spec:
+  selector:
+    app: kafdrop
+  ports:
+    - name: http
+      port: 9000
+  type: NodePort
+                    

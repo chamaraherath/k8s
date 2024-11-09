@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafkadrop
+  namespace: cloud-connect
+  labels:
+    app: kafkadrop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafkadrop
+  template:
+    metadata:
+      labels:
+        app: kafkadrop
+    spec:
+      containers:
+        - name: kafkadrop
+          image: obsidiandynamics/kafdrop
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+          envFrom:
+            - configMapRef:
+                name: kafka-drop-config

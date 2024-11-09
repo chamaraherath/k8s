@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: api
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/tracker-node-api:1.0.17
+        env:
+        - name: BC_BASE_URL
+          value: https://qa-byond-cloud.opusxenta.dev
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  ingressClassName: ext-general
+  tls:
+  - hosts:
+    - qa-tracker-api.opusxenta.dev
+    secretName: cert-qa-tracker-api-opusxenta-dev
+  rules:
+  - host: qa-tracker-api.opusxenta.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracker-node-api
+            port:
+              number: 5000

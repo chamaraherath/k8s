@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: location-microservice
+  namespace: cloud-connect
+spec:
+  selector:
+    matchLabels:
+      app: location-microservice
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: location-microservice
+    spec:
+      containers:
+      - name: location-microservice
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/location-microservice:1.0.36
+        ports:
+        - containerPort: 3000
+        envFrom:
+            - configMapRef:
+                name: location-microservice-config

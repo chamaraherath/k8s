@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: person-callback-service
+  namespace: cloud-connect
+spec:
+  selector:
+    matchLabels:
+      app: person-callback-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: person-callback-service
+    spec:
+      containers:
+      - name: person-callback-service
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/person-callback-microservice:1.0.9-dev
+        ports:
+        - containerPort: 3000
+        envFrom:
+            - configMapRef:
+                name: callback-microservice-config

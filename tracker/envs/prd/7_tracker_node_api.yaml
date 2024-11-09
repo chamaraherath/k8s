@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: api
+        image: 922369738522.dkr.ecr.ap-southeast-2.amazonaws.com/tracker-node-api:1.0.17
+        env:
+        - name: BC_BASE_URL
+          value: https://apps.byond.cloud
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tracker-node-api
+  namespace: tracker
+spec:
+  ingressClassName: ext-general
+  tls:
+  - hosts:
+    - tracker-api.byond.cloud
+    secretName: cert-tracker-api-byond-cloud
+  rules:
+  - host: tracker-api.byond.cloud
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracker-node-api
+            port:
+              number: 5000

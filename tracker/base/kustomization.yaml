@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- 1_zookeeper.yaml
+- 2_kafka.yaml
+- 3_ksqldb_server.yaml
+- 4_kafdrop.yaml
+- 5_debeziumcdc.yaml
+- 6_tracker_ms_api.yaml
+- 7_tracker_node_api.yaml
+- 8_tracker_client.yaml

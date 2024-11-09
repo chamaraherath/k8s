@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: person-microservice-config
+  namespace: cloud-connect
+data:
+  NODE_ENV: "development"
+  MONGODB_URL: "mongodb://mongo-service.cloud-connect.svc.cluster.local:27017/cloud_connect"
+  KAFKA_BROKER_HOST: "kafka-service.cloud-connect.svc.cluster.local"
+  KAFKA_BROKER_PORT: "9092"
+  DB_DRIVER: "mysql"
+  MYSQL_HOST: "172.20.40.14"
+  MYSQL_PORT: "3306"
+  MYSQL_USER: "cloud_connect"
+  MYSQL_PASSWORD: "yNbv70jY5>sSFy"
+  MYSQL_DATABASE: "bc_dev"
+  MYSQL_DB_SYNC: "true"

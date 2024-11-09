@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tracker-ms-api
+  namespace: tracker
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: api
+        image: 209703339956.dkr.ecr.ap-southeast-1.amazonaws.com/tracker-microservice:1.0.52
+        env:
+        - name: DEPENV
+          value: "DEV"
+        - name: ENVIRONMENT
+          value: "DEV"
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: mongodb-connection-string
+  namespace: tracker
+spec:
+  data:
+  - secretKey: connection-string
+    remoteRef:
+      key: "dev-eks-tracker-mongodb-connection-string"
+      version: "AWSCURRENT"
